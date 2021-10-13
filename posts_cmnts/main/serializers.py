@@ -16,11 +16,27 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class FilterCommentSerializer(serializers.ListSerializer):
+    def to_representation(self, data):
+        data = data.filter(parent_comment=None)
+        return super().to_representation(data)
+
+
+class CommentChildrenSerializer(serializers.Serializer):
+
+    def to_representation(self, instance):
+        serializer = self.parent.parent.__class__(instance, context=self.context)
+        return serializer.data
+
+
 class CommentSerializer(serializers.ModelSerializer):
+
+    children = CommentChildrenSerializer(many=True)
 
     class Meta:
         model = Comment
-        fields = ('author_name', 'content', 'creation_date', 'parent_comment')
+        list_serializer_class = FilterCommentSerializer
+        fields = ('author_name', 'content', 'creation_date', 'children')
 
 
 class NewsPostDetailSerializer(serializers.ModelSerializer):

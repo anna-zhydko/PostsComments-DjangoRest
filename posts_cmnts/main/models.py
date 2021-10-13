@@ -15,5 +15,5 @@ class Comment(models.Model):
     creation_date = models.DateField(verbose_name='creation date')
     news_post = models.ForeignKey(NewsPost, verbose_name='news_post', on_delete=models.CASCADE, related_name='comments')
     parent_comment = models.ForeignKey(
-        'self', verbose_name="parent comment", on_delete=models.SET_NULL, blank=True, null=True
+        'self', verbose_name="parent comment", on_delete=models.SET_NULL, blank=True, null=True, related_name='children'
     )

@@ -16,8 +16,15 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CommentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment
+        fields = ('author_name', 'content', 'creation_date', 'parent_comment')
+
+
 class NewsPostDetailSerializer(serializers.ModelSerializer):
-    comments = CommentCreateSerializer(many=True)
+    comments = CommentSerializer(many=True)
 
     class Meta:
         model = NewsPost

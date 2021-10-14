@@ -9,11 +9,18 @@ class NewsPostListSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class NewsPostSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = NewsPost
+        exclude = ('id', 'amount_of_upvotes', 'creation_date')
+
+
 class CommentCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = '__all__'
+        exclude = ('creation_date', )
 
 
 class FilterCommentSerializer(serializers.ListSerializer):
@@ -23,7 +30,6 @@ class FilterCommentSerializer(serializers.ListSerializer):
 
 
 class CommentChildrenSerializer(serializers.Serializer):
-
     def to_representation(self, instance):
         serializer = self.parent.parent.__class__(instance, context=self.context)
         return serializer.data

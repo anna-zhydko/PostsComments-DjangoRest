@@ -1,9 +1,15 @@
+from django.http import Http404
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from django.shortcuts import get_object_or_404
+
 from .models import NewsPost, Upvote
-from .serializers import NewsPostListSerializer, NewsPostDetailSerializer, CommentCreateSerializer, CreateVoteSerializer
+from .serializers import NewsPostListSerializer, NewsPostDetailSerializer, CommentCreateSerializer, \
+    CreateVoteSerializer, NewsPostSerializer
 from .addition import get_ip
+import datetime
 
 
 class NewsPostListView(APIView):
@@ -17,10 +23,37 @@ class NewsPostListView(APIView):
 class NewsPostDetailView(APIView):
 
     def get(self, request, pk):
-        news_post = NewsPost.objects.get(id=pk)
+        # news_post = NewsPost.objects.get(id=pk)
+        news_post = get_object_or_404(NewsPost.objects.all(), pk=pk)
         serializer = NewsPostDetailSerializer(news_post)
-
         return Response(serializer.data)
+
+
+class NewsPostUpdateView(APIView):
+
+    def put(self, request, pk):
+        # news_post = NewsPost.objects.get(id=pk)
+        news_post = get_object_or_404(NewsPost.objects.all(), pk=pk)
+        serializer = NewsPostSerializer(news_post, data=request.data)
+        if serializer.is_valid():
+            serializer.save(creation_date=datetime.datetime.now().strftime('%Y-%m-%d'))
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        # news_post = NewsPost.objects.get(id=pk)
+        news_post = get_object_or_404(NewsPost.objects.all(), pk=pk)
+        news_post.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class NewsPostCreateView(APIView):
+
+    def post(self, request):
+        news_post = NewsPostSerializer(data=request.data)
+        if news_post.is_valid():
+            news_post.save(creation_date=datetime.datetime.now().strftime('%Y-%m-%d'))
+        return Response(status=201)
 
 
 class CommentCreateView(APIView):
@@ -28,7 +61,7 @@ class CommentCreateView(APIView):
     def post(self, request):
         comment = CommentCreateSerializer(data=request.data)
         if comment.is_valid():
-            comment.save()
+            comment.save(creation_date=datetime.datetime.now().strftime('%Y-%m-%d'))
         return Response(status=201)
 
 

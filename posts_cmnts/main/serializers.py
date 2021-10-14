@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import NewsPost, Comment
+from .models import NewsPost, Comment, Upvote
 
 
 class NewsPostListSerializer(serializers.ModelSerializer):
@@ -45,3 +45,19 @@ class NewsPostDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewsPost
         fields = '__all__'
+
+
+class CreateVoteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Upvote
+        fields = ('news_post', 'vote')
+
+    def create(self, validated_data):
+        vote = Upvote.objects.update_or_create(
+            ip=validated_data.get('ip', None),
+            news_post=validated_data.get('news_post', None),
+            defaults={'vote': validated_data.get('vote')}
+        )
+        return vote
+

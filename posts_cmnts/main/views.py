@@ -5,9 +5,9 @@ from rest_framework.views import APIView
 
 from django.shortcuts import get_object_or_404
 
-from .models import NewsPost, Upvote
-from .serializers import NewsPostListSerializer, NewsPostDetailSerializer, CommentCreateSerializer, \
-    CreateVoteSerializer, NewsPostSerializer
+from .models import NewsPost, Upvote, Comment
+from .serializers import NewsPostListSerializer, NewsPostDetailSerializer, CommentUpdateSerializer, CommentDetailSerializer, \
+    CreateVoteSerializer, NewsPostSerializer, CommentSerializer
 from .addition import get_ip
 import datetime
 
@@ -56,13 +56,47 @@ class NewsPostCreateView(APIView):
         return Response(status=201)
 
 
+class CommentListView(APIView):
+    """Posts list output"""
+    def get(self, request):
+        comments = Comment.objects.all()
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
+
+
 class CommentCreateView(APIView):
 
     def post(self, request):
-        comment = CommentCreateSerializer(data=request.data)
+        comment = CommentUpdateSerializer(data=request.data)
         if comment.is_valid():
             comment.save(creation_date=datetime.datetime.now().strftime('%Y-%m-%d'))
         return Response(status=201)
+
+
+class CommentDetailView(APIView):
+    def get(self, request, pk):
+        # news_post = NewsPost.objects.get(id=pk)
+        comment = get_object_or_404(Comment.objects.all(), pk=pk)
+        serializer = CommentDetailSerializer(comment)
+        return Response(serializer.data)
+
+
+class CommentUpdateView(APIView):
+
+    def put(self, request, pk):
+        # news_post = NewsPost.objects.get(id=pk)
+        comment = get_object_or_404(Comment.objects.all(), pk=pk)
+        serializer = CommentUpdateSerializer(comment, data=request.data)
+        if serializer.is_valid():
+            serializer.save(creation_date=datetime.datetime.now().strftime('%Y-%m-%d'))
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        # news_post = NewsPost.objects.get(id=pk)
+        comment = get_object_or_404(Comment.objects.all(), pk=pk)
+        comment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class UpvoteView(APIView):

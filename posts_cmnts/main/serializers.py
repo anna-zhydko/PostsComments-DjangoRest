@@ -16,11 +16,18 @@ class NewsPostSerializer(serializers.ModelSerializer):
         exclude = ('id', 'amount_of_upvotes', 'creation_date')
 
 
-class CommentCreateSerializer(serializers.ModelSerializer):
+class CommentUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        exclude = ('creation_date', )
+        exclude = ('id', 'creation_date', )
+
+
+class CommentDetailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
 
 
 class FilterCommentSerializer(serializers.ListSerializer):
@@ -42,7 +49,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         list_serializer_class = FilterCommentSerializer
-        fields = ('author_name', 'content', 'creation_date', 'children')
+        fields = '__all__'
 
 
 class NewsPostDetailSerializer(serializers.ModelSerializer):

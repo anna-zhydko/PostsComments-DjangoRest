@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  web:
+    build: .
+    command: bash -c "python /usr/src/posts_cmnts/manage.py migrate --noinput &&
+             python /usr/src/posts_cmnts/manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/usr/src/posts_cmnts
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres
+    volumes:
+      - postgresql_data:/var/lib/postgresql
+    restart: always
+
+
+volumes:
+  postgresql_data:

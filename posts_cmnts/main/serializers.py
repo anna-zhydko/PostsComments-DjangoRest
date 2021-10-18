@@ -66,11 +66,24 @@ class CreateVoteSerializer(serializers.ModelSerializer):
         model = Upvote
         fields = ('news_post', 'vote')
 
-    def create(self, validated_data):
-        vote = Upvote.objects.update_or_create(
-            ip=validated_data.get('ip', None),
-            news_post=validated_data.get('news_post', None),
-            defaults={'vote': validated_data.get('vote')}
-        )
-        return vote
+    # def create(self, validated_data):
+
+        # try:
+        #     votee = Upvote.objects.get(vote=1)
+        #
+        #
+        #
+        #
+        #
+        #
+        # Upvote.objects.all().delete()
+        # votee = Upvote.objects.get(vote = 1)
+        #
+        # print('voteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', votee)
+        # vote = Upvote.objects.update_or_create(
+        #     ip=validated_data.get('ip', None),
+        #     news_post=validated_data.get('news_post', None),
+        #     defaults={'vote': validated_data.get('vote')}
+        # )
+        # return vote
 

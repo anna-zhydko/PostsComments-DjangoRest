@@ -18,6 +18,23 @@ services:
       - postgresql_data:/var/lib/postgresql
     restart: always
 
+  redis:
+    image: redis
+    volumes:
+      - redis_data:/var/lib/redis
+    restart: always
+    ports:
+      - 6379:6379
+
+  celery:
+    build: .
+    command: celery -A posts_cmnts worker -B -l INFO
+    volumes:
+      - .:/usr/src/posts_cmnts
+    depends_on:
+      - web
+      - redis
 
 volumes:
   postgresql_data:
+  redis_data:

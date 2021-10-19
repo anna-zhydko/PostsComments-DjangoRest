@@ -7,7 +7,7 @@ def reset_upvotes():
     news_posts = NewsPost.objects.all()
     for news_post in news_posts:
         print(news_post.amount_of_upvotes)
-        setattr(news_post, 'amount_of_upvotes', 0)
+        setattr(news_post, "amount_of_upvotes", 0)
         news_post.save()
         # news_post.amount_of_upvotes = 0
         # print(news_post.amount_of_upvotes)

@@ -126,7 +126,6 @@ class UpvoteView(APIView):
                 if upvote_object:
                     # the vote points before saving e.m if person already voted 1 or -1 it wouldn't change
                     last_vote_points = upvote_object[0].vote
-                print("last vote points", last_vote_points)
 
                 Upvote.objects.update_or_create(
                     ip=ip, news_post=news_post_id, defaults={"vote": vote_points}
@@ -136,7 +135,6 @@ class UpvoteView(APIView):
                 if (
                     last_vote_points != vote_points
                 ):  # if client has changed the vote points
-                    print("has changed")
                     news_post.update(
                         amount_of_upvotes=news_post[0].amount_of_upvotes + vote_points
                     )

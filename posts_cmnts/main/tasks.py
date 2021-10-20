@@ -12,4 +12,3 @@ def reset_upvotes():
     news_posts = NewsPost.objects.all()
     for news_post in news_posts:
         print(news_post.amount_of_upvotes)
-

@@ -122,9 +122,9 @@ class UpvoteView(APIView):
             vote_points = serializer.validated_data["vote"]
             if vote_points in [1, -1]:
 
-                upvote_object = Upvote.objects.filter(ip=ip)
+                upvote_object = Upvote.objects.filter(news_post=news_post_id)
                 if upvote_object:
-                    # the vote points before saving e.m if person already voted 1 or -1 it wouldn't change
+                    # the previous vote points from the ip
                     last_vote_points = upvote_object[0].vote
 
                 Upvote.objects.update_or_create(
@@ -132,9 +132,9 @@ class UpvoteView(APIView):
                 )
 
                 news_post = NewsPost.objects.filter(pk=news_post_id.id)
-                if (
-                    last_vote_points != vote_points
-                ):  # if client has changed the vote points
+
+                # if client has changed the vote points
+                if last_vote_points != vote_points:
                     news_post.update(
                         amount_of_upvotes=news_post[0].amount_of_upvotes + vote_points
                     )

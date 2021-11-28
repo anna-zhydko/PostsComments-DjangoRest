@@ -5,18 +5,36 @@ services:
     build: .
     command: bash -c "python /usr/src/posts_cmnts/manage.py migrate --noinput &&
              python /usr/src/posts_cmnts/manage.py runserver 0.0.0.0:8000"
+
     volumes:
       - .:/usr/src/posts_cmnts
+    restart: always
     ports:
       - 8000:8000
+#    environment:
+#      POSTGRES_NAME: "posts_cmnts"
+#      POSTGRES_USER: "anna"
+#      POSTGRES_PASSWORD: "test"
+
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+
 
   postgres:
     image: postgres
     volumes:
       - postgresql_data:/var/lib/postgresql
     restart: always
+    environment:
+      POSTGRES_DB: "posts_cmnts"
+      POSTGRES_USER: "anna"
+      POSTGRES_PASSWORD: "test"
+    healthcheck:
+      test: [ "CMD", "pg_isready"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis

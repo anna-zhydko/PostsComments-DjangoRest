@@ -1,6 +1,6 @@
 django
 Pillow
 djangorestframework
-psycopg2-binary
+psycopg2
 celery
 redis

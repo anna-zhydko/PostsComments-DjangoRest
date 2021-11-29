@@ -3,18 +3,15 @@ version: "3.8"
 services:
   web:
     build: .
-    command: bash -c "python /usr/src/posts_cmnts/manage.py migrate --noinput &&
+    command: bash -c "python /usr/src/posts_cmnts/manage.py makemigrations --noinput &&
+             python /usr/src/posts_cmnts/manage.py migrate  &&
              python /usr/src/posts_cmnts/manage.py runserver 0.0.0.0:8000"
 
     volumes:
       - .:/usr/src/posts_cmnts
-    restart: always
+#    restart: always
     ports:
       - 8000:8000
-#    environment:
-#      POSTGRES_NAME: "posts_cmnts"
-#      POSTGRES_USER: "anna"
-#      POSTGRES_PASSWORD: "test"
 
     depends_on:
       postgres:
@@ -28,10 +25,11 @@ services:
     restart: always
     environment:
       POSTGRES_DB: "posts_cmnts"
-      POSTGRES_USER: "anna"
+      POSTGRES_NAME: "posts_cmnts"
+      POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "test"
     healthcheck:
-      test: [ "CMD", "pg_isready"]
+      test: [ "CMD", "pg_isready", "-U", "postgres"]
       interval: 30s
       timeout: 5s
       retries: 5
